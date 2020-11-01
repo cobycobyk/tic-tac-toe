@@ -14,6 +14,7 @@ const squares = document.querySelectorAll('.square');
 const msgEl = document.getElementById('msg');
 /*----- event listeners -----*/
 document.getElementById('board').addEventListener('click', handleSquareClick);
+document.getElementById('replay').addEventListener('click', init);
 /*----- functions -----*/
 init();
 function render() {
@@ -23,12 +24,12 @@ function render() {
     message();
 };
 function message() {
-    if (winner !== null) {
-        msgEl.textContent = `It is ${COLORS[whoseTurn]}'s turn`;
+    if (winner === null) {
+        msgEl.textContent = `It is ${COLORS[whoseTurn].toUpperCase()}'s turn`;
     } else if (winner === 'T') {
         msgEl.textContent = `It's a TIE!`;
     } else {
-        msgEl.textContent = `Congratulations ${COLORS[winner]}! YOU WON!`;
+        msgEl.textContent = `Congratulations ${COLORS[winner].toUpperCase()}! YOU WON!`;
     }
 
 };
@@ -43,10 +44,17 @@ function handleSquareClick(evt) {
     if (boardArray[idx] !== null) return;
     if (winner !== null) return;
     boardArray[idx] = whoseTurn;
-    whoseTurn *= -1
-    WINNING_COMBINATIONS.forEach(function(combo, idx) {
-        
+    whoseTurn *= -1;
+    WINNING_COMBINATIONS.forEach(function(combo) {
+        let count = 0;
+        combo.forEach(function(num) {
+            count += boardArray[num];
+        });
+        count = Math.abs(count);
+        if (count === 3) winner = boardArray[idx];
     });
+    if (!boardArray.includes(null)) winner = 'T';
+    render();
 };
 // 1) Define required constants:
 // 	1.1) Define a colors object with keys of 'null' (when the square is empty), and players 1 & -1. The value assigned to each key represents the color to display for an empty square (null), player 1 and player -1.
@@ -55,7 +63,6 @@ function handleSquareClick(evt) {
 // 2) Define required variables used to track the state of the game:
 // 	2.1) Use a board array to represent the squares.	2.2) Use a turn variable to remember whose turn it is.
 // 	2.3) Use a winner variable to represent three different possibilities - player that won, a tie, or game in play.
-
 
 // 3) Store elements on the page that will be accessed in code more than once in variables to make code more concise, readable and performant:
 // 	3.1) Store the 9 elements that represent the squares on the page.
