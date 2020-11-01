@@ -1,13 +1,18 @@
 /*----- constants -----*/
 const COLORS = {
     null: 'grey',
-    '1': 'blue',
-    '-1': 'yellow',
+    '1': '#C1DBE3',
+    '-1': '#FCE694',
 };
-const NAME = {
+const SYMBOL = {
     null: '',
     '1': 'X',
     '-1': 'O',
+};
+const NAME = {
+    null: '',
+    '1': 'blue',
+    '-1': 'yellow',
 };
 const WINNING_COMBINATIONS = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
 /*----- app's state (variables) -----*/
@@ -17,6 +22,7 @@ let winner;
 /*----- cached element references -----*/
 const squares = document.querySelectorAll('.square');
 const msgEl = document.getElementById('msg');
+const replayBtn = document.getElementById('replay');
 /*----- event listeners -----*/
 document.getElementById('board').addEventListener('click', handleSquareClick);
 document.getElementById('replay').addEventListener('click', init);
@@ -25,17 +31,18 @@ init();
 function render() {
     squares.forEach(function(square, idx) {
         square.style.backgroundColor = COLORS[boardArray[idx]];
-        square.innerHTML = NAME[boardArray[idx]];
+        square.innerHTML = SYMBOL[boardArray[idx]];
     });
+    replayBtn.style.visibility = winner ? 'visible' : 'hidden';
     message();
 };
 function message() {
     if (winner === null) {
-        msgEl.textContent = `It is ${COLORS[whoseTurn].toUpperCase()}'s turn`;
+        msgEl.textContent = `It is ${NAME[whoseTurn].toUpperCase()}'s turn`;
     } else if (winner === 'T') {
         msgEl.textContent = `It's a TIE!`;
     } else {
-        msgEl.textContent = `Congratulations ${COLORS[winner].toUpperCase()}! YOU WON!`;
+        msgEl.textContent = `Congratulations ${NAME[winner].toUpperCase()}! YOU WON!`;
     }
 
 };
@@ -47,22 +54,24 @@ function init() {
 };
 function handleSquareClick(evt) {
     let idx = evt.target.getAttribute('id')
-    if (boardArray[idx] !== null) return;
-    if (winner !== null) return;
+    if (boardArray[idx]) return;
+    if (winner) return;
     boardArray[idx] = whoseTurn;
     whoseTurn *= -1;
-    WINNING_COMBINATIONS.forEach(function(combo) {
+    winner = computeWinner();
+    render();
+};
+function computeWinner() {
+    for (let combo of WINNING_COMBINATIONS) {
         let count = 0;
         combo.forEach(function(num) {
             count += boardArray[num];
-        });
+        })
         count = Math.abs(count);
-        if (count === 3) winner = boardArray[idx];
-    });
-    if (winner === null && !boardArray.includes(null)) winner = 'T';
-    console.log(winner)
-    render();
-};
+        if (count === 3) return boardArray[combo[0]];
+    }
+    return (boardArray.includes(null) ? null : 'T');
+}
 // 1) Define required constants:
 // 	1.1) Define a colors object with keys of 'null' (when the square is empty), and players 1 & -1. The value assigned to each key represents the color to display for an empty square (null), player 1 and player -1.
 // 	1.2) Define the 8 possible winning combinations, each containing three indexes of the board that make a winner if they hold the same player value.
@@ -85,7 +94,7 @@ function handleSquareClick(evt) {
 // 				4.2.1.1.2) Use the index of the iteration to access the mapped value from the board array.
 // 				4.3.1.1.3) Set the background color of the current element by using the value as a key on the colors lookup object (constant).
 // 		4.2.2) Render a message:
-// 			4.2.2.1) If winner has a value other than null (game still in progress), render whose turn it is - use the color name for the player, converting it to upper case.
+// 			4.2.2.1) If winner has a value other than null (game still in progress), render whose turn it is - use the color SYMBOL for the player, converting it to upper case.
 // 			4.2.2.2) If winner is equal to 'T' (tie), render a tie message.
 // 			4.2.2.3) Otherwise, render a congratulatory message to which player has won - use the color name for the player, converting it to uppercase.
 // 	4.3) Wait for the user to click a square

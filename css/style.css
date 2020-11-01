@@ -12,8 +12,8 @@
   header {
       font-size: 6vmin;
       padding: 1vmin;
-      background-color: aquamarine;
-      color: darkblue;
+      background-color: #373737;
+      color: #F6FEAA;
       text-align: center;
       letter-spacing: .5vmin;
   }
@@ -23,10 +23,11 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      background-color: #9F9FAD;
   }
   #msg {
       font-size: 5vmin;
-      color: darkcyan;
+      color: #C7DFC5;
       text-align: center;
   }
 
@@ -34,7 +35,6 @@
       display: grid;
       grid-template-columns: 150px 150px 150px;
       grid-template-rows: 150px 150px 150px;
-      justify-content: center;
       margin: 0 4vmin;
       border: 2px solid black;
   }
