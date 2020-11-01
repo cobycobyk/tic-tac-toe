@@ -36,11 +36,12 @@
       grid-template-rows: 150px 150px 150px;
       justify-content: center;
       margin: 0 4vmin;
+      border: 2px solid black;
   }
 
   #board div {
       font-size: 30px;
-      border: 1px solid black;
+      border: 2px solid black;
       text-align: center;
   }
 
